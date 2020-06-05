@@ -1,0 +1,191 @@
+<!-- 
+    DONE: Random button alignment
+    DONE: random if 0 size grid
+    TODO: nicer alert?
+    TODO: mousedown colour error
+    TODO: deal with odd gid size (64, 71)
+ -->
+
+<!DOCTYPE html>
+ <html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Etch-a-Sketch</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div id="header">
+            <input id="resetInput" value="Start" type="button">
+            <input id="randomInput" value="Random" type="button">
+        </div>
+
+        <div id = "container" >
+        </div>
+
+        <div id = "footer">
+            <P>A project by Sasoun Torossian. 2020</P>
+        </div>
+
+        <script>
+            let activeMouse = false
+            let defaultColour = "white"
+
+            let containerID = document.getElementById("container")
+            let containerWidth = containerID.clientWidth
+            let containerHeight = containerID.clientHeight
+
+
+            function generateGrid(gridSize) {
+                let boxWidth = Math.floor(containerWidth/gridSize)
+                let boxHeight = Math.floor(containerHeight/gridSize)
+                containerID.innerHTML = ''
+
+                for (let i = 0; i < gridSize; i++) {
+                    for (let j = 0; j < gridSize; j++) {
+                        let div = document.createElement("div")
+                        div.setAttribute('r', '0')
+                        div.setAttribute('g', '0')
+                        div.setAttribute('b', '0')
+                        let rgb
+                        let r, r10
+                        let g, g10
+                        let b, b10
+
+                        div.style.width = boxWidth + "px"
+                        div.style.height = boxHeight + "px"
+                        div.style.background = defaultColour
+
+                        div.addEventListener('mousedown', e => {
+                            if (!e.button) activeMouse = !activeMouse
+                            console.log(`MOUSE DOWN. ActiveMouse is: ${activeMouse}`)
+                        })
+
+                        div.addEventListener('mouseup', e => {
+                            if (!e.button) activeMouse = !activeMouse
+                            console.log(`MOUSE UP. ActiveMouse is: ${activeMouse}`)
+                        })
+
+                        div.addEventListener('mouseover', () => {
+                            if (activeMouse) {
+                                if (div.style.background == defaultColour) {
+                                    rgb = randomRGB()
+                                    r = rgb[0], g = rgb[1], b = rgb[2]
+                                    r10 = r*0.1, g10 = g*0.1, b10 =b*0.1
+
+                                    // div.setAttribute('r', r)
+                                    // div.setAttribute('g', g )
+                                    // div.setAttribute('b', b)
+                                    // div.setAttribute('r10', r10)
+                                    // div.setAttribute('g10', g10)
+                                    // div.setAttribute('b10', b10)
+
+                                    div.style.backgroundColor=colourRGB(r, g, b)
+                                }
+                                else {                                  
+                                    // rgb = shadeRGB(
+                                    //     div.getAttribute('r'),
+                                    //     div.getAttribute('r10'),
+                                    //     div.getAttribute('g'),
+                                    //     div.getAttribute('g10'),
+                                    //     div.getAttribute('b'),
+                                    //     div.getAttribute('b10')
+                                    //     )
+                                    rgb = shadeRGB(r, r10, g, g10, b, b10)
+                                    r = rgb[0], g = rgb[1], b = rgb[2]
+
+                                    // div.setAttribute('r', r)
+                                    // div.setAttribute('g', g)
+                                    // div.setAttribute('b', b)
+
+                                    div.style.backgroundColor=colourRGB(r, g, b)
+                                }
+                            }                            
+                        })
+
+                        div.addEventListener('mouseleave', () => {
+                        })
+
+                        containerID.appendChild(div)
+                    }
+                let jump = document.createElement("br")
+                document.getElementById("container").appendChild(jump)
+                }
+            }
+
+
+            let resetContainer = document.getElementById("resetInput")
+            resetContainer.addEventListener('click', () => {
+                let gridSize = selectGridSize()
+                if(gridSize) {
+                    generateGrid(gridSize)
+                    resetContainer.value = "Reset"
+                    activeMouse = false
+                }
+            })
+
+            let radomContainer = document.getElementById("randomInput")
+            radomContainer.addEventListener('click', () => {
+                let divContainer = document.querySelectorAll("#container div")
+                if (!divContainer.length) {
+                    console.log("EMPTY")
+                    alert("Please start the game and select a grid size.")
+                }
+                
+                divContainer.forEach(div => {
+                    let rgb = randomRGB()
+                    let r = rgb[0], g = rgb[1], b = rgb[2]
+                    let r10 = r*0.1, g10 = g*0.1, b10 =b*0.1
+
+                    div.setAttribute('r', r)
+                    div.setAttribute('g', g)
+                    div.setAttribute('b', b)
+                    div.setAttribute('r10', r10)
+                    div.setAttribute('g10', g10)
+                    div.setAttribute('b10', b10)
+
+                    div.style.backgroundColor=colourRGB(r, g, b)
+                })
+            })
+
+            function selectGridSize() {
+                while (true) {
+                    selection = window.prompt("Select Grid Size (default is 10x10)", 10)
+                    if (checkIfNull(selection)) return 0
+
+                    selectionClean = numberCleanup(selection)
+                    if (checkIfValidNumber(selectionClean)) return selectionClean
+                }
+            }
+
+            function checkIfNull(input) {
+                return (input === null) ? true : false
+            }
+
+            function numberCleanup(number) {
+                return Number(number.trim())
+            }
+
+            function checkIfValidNumber(number) {
+                return isNaN(number) ? false : true
+            }
+
+            function randomRGB() {
+                let p = Math.round, q = Math.random, r = 255;
+                return [p(q()*r), p(q()*r), p(q()*r)]
+            }
+
+            function colourRGB(r, g, b) {
+                return 'rgb(' + r + ',' + g + ',' + b + ')'
+            }
+
+            function shadeRGB(r, r10, g, g10, b, b10) {
+                return [r - r10, g - g10, b - b10]
+            }
+
+
+        </script>
+    </body>
+</html>
