@@ -34,7 +34,7 @@ body {
 #header {
     margin-top: 10px;
     margin-left: 700px;
-    margin: 20px auto;
+    margin: 15px auto;
 }
 
 #header input {
@@ -61,7 +61,6 @@ body {
     width: 600px;
     height: 600px;
     margin: auto auto;
-    /* margin-left: 550px; */
     padding: 0px;
     font-size: 0;
 }
