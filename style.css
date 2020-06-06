@@ -39,6 +39,7 @@ body {
     display: inline-block;
     width: 150px;
     border: none;
+    outline: none;
     margin: 0 10px;
     border-radius: 20px;
     background-color: lightslategray;
@@ -48,6 +49,10 @@ body {
     font-size: 28px;
     font-weight: 500;
     cursor: pointer;
+}
+
+#header input:hover {
+    box-shadow: 0 0 0 2pt lightslategray
 }
 
 /* CONTAINER */
