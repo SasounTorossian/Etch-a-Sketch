@@ -32,8 +32,6 @@ body {
 
 /* HEADER */
 #header {
-    margin-top: 10px;
-    margin-left: 700px;
     margin: 15px auto;
 }
 
@@ -56,11 +54,9 @@ body {
 #container {
     background-color:white;
     border: none;
-    vertical-align: middle;
-    justify-content: center;
     width: 600px;
     height: 600px;
-    margin: auto auto;
+    margin: auto;
     padding: 0px;
     font-size: 0;
 }
