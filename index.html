@@ -23,13 +23,17 @@
 
         <script>
             let activeMouse = false
-            let defaultColour = "white"
+            const defaultColour = "white"
 
             // Event listener for handing mousedown. Toggles draw on
             let containerID = document.getElementById("container")
             containerID.addEventListener('mousedown', e => {
                 clearSelection()
-                if (!e.button) activeMouse = true
+                if (!e.button) {
+                    let div = e.target
+                    colourAndShadeRGB(div)
+                    activeMouse = true
+                }
             })
 
             // Event listener for handing mouseip. Toggles draw off
@@ -53,26 +57,14 @@
             radomContainer.addEventListener('click', () => {
                 let divContainer = document.querySelectorAll("#container div")
                 if (!divContainer.length) {
-                    console.log("EMPTY")
                     alert("Please start the game and select a grid size.")
                 }
-                
-                divContainer.forEach(div => {
-                    let rgb = randomRGB()
-                    let r = rgb[0], g = rgb[1], b = rgb[2]
-                    let r10 = r/10, g10 = g/10, b10 =b/10
-
-                    div.setAttribute('r', r)
-                    div.setAttribute('g', g)
-                    div.setAttribute('b', b)
-                    div.setAttribute('r10', r10)
-                    div.setAttribute('g10', g10)
-                    div.setAttribute('b10', b10)
-
-                    div.style.backgroundColor=colourRGB(r, g, b)
-                })
+                else {
+                    divContainer.forEach(div => {
+                        colourAndShadeRGB(div, true)
+                    })
+                }
             })
-
 
             // Creates grid based on desired gridsize.
             function generateGrid(gridSize) {
@@ -85,8 +77,10 @@
                 // Check if required grid size will fit into original 600pxx600px container. If not, find excess and subtract from original container.
                 if (containerWidth%gridSize != 0 ||
                     containerHeight%gridSize != 0) {
-                        containerID.style.width = containerWidth - containerWidth%gridSize + "px"
-                        containerID.style.height = containerHeight - containerHeight%gridSize + "px"
+                        containerID.style.width = containerWidth - 
+                        containerWidth%gridSize + "px"
+                        containerID.style.height = containerHeight - 
+                        containerHeight%gridSize + "px"
 
                         containerWidth = containerID.clientWidth
                         containerHeight = containerID.clientHeight
@@ -99,49 +93,14 @@
                 for (let i = 0; i < gridSize; i++) {
                     for (let j = 0; j < gridSize; j++) {
                         let div = document.createElement("div")
-                        let rgb
-                        let r, r10
-                        let g, g10
-                        let b, b10
 
                         div.style.width = boxWidth + "px"
                         div.style.height = boxHeight + "px"
                         div.style.background = defaultColour
 
-                        // Add mouseover event handler to colour in blocks if button is pressed, or shade by 10% if already coloured
+                        // Add mouseover event handler to colour in blocks if button is pressed.
                         div.addEventListener('mouseover', () => {
-                            if (activeMouse) {
-                                if (div.style.background == defaultColour) {
-                                    rgb = randomRGB()
-                                    r = rgb[0], g = rgb[1], b = rgb[2]
-                                    r10 = r/10, g10 = g/10, b10 =b/10
-
-                                    div.setAttribute('r', r)
-                                    div.setAttribute('g', g )
-                                    div.setAttribute('b', b)
-                                    div.setAttribute('r10', r10)
-                                    div.setAttribute('g10', g10)
-                                    div.setAttribute('b10', b10)
-
-                                    div.style.backgroundColor = colourRGB(r, g, b)
-                                }
-                                else {                                  
-                                    r = div.getAttribute('r') - 
-                                        div.getAttribute('r10')
-
-                                    g = div.getAttribute('g') - 
-                                        div.getAttribute('g10')
-
-                                    b = div.getAttribute('b') - 
-                                        div.getAttribute('b10')
-
-                                    div.setAttribute('r', r)
-                                    div.setAttribute('g', g)
-                                    div.setAttribute('b', b)
-
-                                    div.style.backgroundColor = colourRGB(r, g, b)
-                                }
-                            }                            
+                            if (activeMouse) colourAndShadeRGB(div)                    
                         })
                         containerID.appendChild(div)
                     }
@@ -150,7 +109,7 @@
                 }
             }
 
-            // Promt uset to select a grid size.
+            // Promt user to select a grid size.
             function selectGridSize() {
                 while (true) {
                     selection = window.prompt("Select Grid Size (default is 10x10)", 10)
@@ -171,6 +130,39 @@
 
             function checkIfValidNumber(number) {
                 return isNaN(number) ? false : true
+            }
+
+            // Colours block if block is currently empty, or reset is passed as true. If block is already coloured, shade by 10%
+            function colourAndShadeRGB(elem, reset = false) {
+                let rgb
+                let r, g, b
+                let r10, g10, b10
+                if (elem.style.background == defaultColour ||
+                    reset == true) {
+                    rgb = randomRGB()
+                    r = rgb[0], g = rgb[1], b = rgb[2]
+                    r10 = r/10, g10 = g/10, b10 =b/10
+
+                    elem.setAttribute('r10', r10)
+                    elem.setAttribute('g10', g10)
+                    elem.setAttribute('b10', b10)
+                }
+                else {                                  
+                    r = elem.getAttribute('r') - 
+                        elem.getAttribute('r10')
+
+                    g = elem.getAttribute('g') - 
+                        elem.getAttribute('g10')
+
+                    b = elem.getAttribute('b') - 
+                        elem.getAttribute('b10')
+                }
+                
+                elem.setAttribute('r', r)
+                elem.setAttribute('g', g)
+                elem.setAttribute('b', b)
+
+                elem.style.backgroundColor = colourRGB(r, g, b)
             }
 
             // Generates random rgb value and returns array
